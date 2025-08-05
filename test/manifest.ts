@@ -918,6 +918,54 @@ describe('Manifest', () => {
       expect(manifest.repositoryConfig['node-packages'].draftPullRequest).to.be
         .false;
     });
+
+    it('should read version pattern from manifest', async () => {
+      const getFileContentsStub = sandbox.stub(
+        github,
+        'getFileContentsOnBranch'
+      );
+      getFileContentsStub
+        .withArgs('release-please-config.json', 'main')
+        .resolves(
+          buildGitHubFileContent(
+            fixturesPath,
+            'manifest/config/version-pattern.json'
+          )
+        )
+        .withArgs('.release-please-manifest.json', 'main')
+        .resolves(
+          buildGitHubFileContent(
+            fixturesPath,
+            'manifest/versions/versions.json'
+          )
+        );
+      const manifest = await Manifest.fromManifest(
+        github,
+        github.repository.defaultBranch
+      );
+      expect(manifest.repositoryConfig['packages/pkg-a'].versionPattern
+      ).to.eql(
+        '${version}-RELEASE'
+      );
+      expect(
+        manifest.repositoryConfig['packages/pkg-b'].versionPattern
+      ).to.eql('${version}-beta');
+      expect(
+          manifest.repositoryConfig['packages/pkg-b'].extraFiles
+      ).to.eql([
+        {
+          "type": "json",
+          "path": "packages/pkg-b/manifest.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/pkg-b/schema.json",
+          "jsonpath": "$.schema_url",
+          "version-pattern": "https://example.com/schemas/${version}/schema.json"
+        }
+      ]);
+    });
   });
 
   describe('fromConfig', () => {

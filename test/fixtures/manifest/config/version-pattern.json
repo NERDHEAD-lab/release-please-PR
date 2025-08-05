@@ -1,0 +1,30 @@
+{
+  "version-pattern": "${version}-RELEASE",
+  "packages": {
+    "packages/pkg-a": {
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "packages/pkg-a/manifest.json",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "packages/pkg-b": {
+      "version-pattern": "${version}-beta",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "packages/pkg-b/manifest.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/pkg-b/schema.json",
+          "jsonpath": "$.schema_url",
+          "version-pattern": "https://example.com/schemas/${version}/schema.json"
+        }
+      ]
+    }
+  }
+}
