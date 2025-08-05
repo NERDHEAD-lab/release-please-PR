@@ -64,7 +64,7 @@ describe('GenericXml', () => {
       ).replace(/\r\n/g, '\n');
       const updater = new GenericXml(
         '//Project/PropertyGroup/Version',
-          Version.parse('v2.3.4'),
+        Version.parse('v2.3.4'),
         '${version}-RELEASE'
       );
       const newContent = updater.updateContent(oldContent);

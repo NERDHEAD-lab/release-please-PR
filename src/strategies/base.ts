@@ -326,7 +326,7 @@ export abstract class BaseStrategy implements Strategy {
     );
     if (!bumpOnlyOptions && this.changelogEmpty(releaseNotesBody)) {
       this.logger.info(
-        `No user facing commits found since ${ 
+        `No user facing commits found since ${
           latestRelease ? latestRelease.sha : 'beginning of time'
         } - skipping`
       );
@@ -480,7 +480,7 @@ export abstract class BaseStrategy implements Strategy {
               break;
             default:
               throw new Error(
-                `unsupported extraFile type: ${ 
+                `unsupported extraFile type: ${
                   (extraFile as {type: string}).type
                 }`
               );
@@ -491,11 +491,7 @@ export abstract class BaseStrategy implements Strategy {
           path: this.addPath(extraFile),
           createIfMissing: false,
           updater: new CompositeUpdater(
-            new GenericJson(
-              '$.version',
-              version,
-              this.versionPattern
-            ),
+            new GenericJson('$.version', version, this.versionPattern),
             new Generic({version, versionsMap, dateFormat: dateFormat})
           ),
         });
@@ -504,11 +500,7 @@ export abstract class BaseStrategy implements Strategy {
           path: this.addPath(extraFile),
           createIfMissing: false,
           updater: new CompositeUpdater(
-            new GenericYaml(
-              '$.version',
-              version,
-              this.versionPattern
-            ),
+            new GenericYaml('$.version', version, this.versionPattern),
             new Generic({version, versionsMap, dateFormat: dateFormat})
           ),
         });
@@ -517,11 +509,7 @@ export abstract class BaseStrategy implements Strategy {
           path: this.addPath(extraFile),
           createIfMissing: false,
           updater: new CompositeUpdater(
-            new GenericToml(
-              '$.version',
-              version,
-              this.versionPattern
-            ),
+            new GenericToml('$.version', version, this.versionPattern),
             new Generic({version, versionsMap, dateFormat: dateFormat})
           ),
         });
@@ -531,11 +519,7 @@ export abstract class BaseStrategy implements Strategy {
           createIfMissing: false,
           updater: new CompositeUpdater(
             // Updates "version" element that is a child of the root element.
-            new GenericXml(
-              '/*/version',
-              version,
-              this.versionPattern
-            ),
+            new GenericXml('/*/version', version, this.versionPattern),
             new Generic({version, versionsMap, dateFormat: dateFormat})
           ),
         });

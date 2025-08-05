@@ -31,11 +31,7 @@ export class GenericToml implements Updater {
   readonly version: Version;
   readonly versionPattern?: string;
 
-  constructor(
-    jsonpath: string,
-    version: Version,
-    versionPattern?: string
-  ) {
+  constructor(jsonpath: string, version: Version, versionPattern?: string) {
     this.jsonpath = jsonpath;
     this.version = version;
     this.versionPattern = versionPattern;

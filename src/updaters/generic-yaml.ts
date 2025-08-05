@@ -34,11 +34,7 @@ export class GenericYaml implements Updater {
   readonly version: Version;
   readonly versionPattern?: string;
 
-  constructor(
-    jsonpath: string,
-    version: Version,
-    versionPattern?: string
-  ) {
+  constructor(jsonpath: string, version: Version, versionPattern?: string) {
     this.jsonpath = jsonpath;
     this.version = version;
     this.versionPattern = versionPattern;
@@ -73,7 +69,10 @@ export class GenericYaml implements Updater {
 
           modified = true;
           const newVersion = this.versionPattern
-            ? this.versionPattern.replace(/\${version}/g, this.version.toString())
+            ? this.versionPattern.replace(
+                /\${version}/g,
+                this.version.toString()
+              )
             : this.version.toString();
           payload.parent[payload.parentProperty] = newVersion;
           return payload;
