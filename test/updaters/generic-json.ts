@@ -81,5 +81,18 @@ describe('GenericJson', () => {
       const newContent = updater.updateContent(oldContent);
       expect(newContent).to.eql(oldContent);
     });
+    it('updates matching entry with custom version pattern', async () => {
+      const oldContent = readFileSync(
+        resolve(fixturesPath, './esy.json'),
+        'utf8'
+      ).replace(/\r\n/g, '\n');
+      const updater = new GenericJson(
+        '$.version',
+        Version.parse('v2.3.4'),
+        '${version}-RELEASE'
+      );
+      const newContent = updater.updateContent(oldContent);
+      snapshot(newContent);
+    });
   });
 });

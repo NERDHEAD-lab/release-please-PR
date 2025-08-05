@@ -19,19 +19,23 @@ import * as xpath from 'xpath';
 export class GenericXml extends BaseXml {
   private readonly xpath: string;
   private readonly version: Version;
+  private readonly versionPattern?: string;
 
-  constructor(xpath: string, version: Version) {
+  constructor(xpath: string, version: Version, versionPattern?: string) {
     super();
     this.xpath = xpath;
     this.version = version;
+    this.versionPattern = versionPattern;
   }
 
   protected updateDocument(document: Document): boolean {
-    const version = this.version.toString();
+    const newVersion = this.versionPattern
+      ? this.versionPattern.replace(/\${version}/g, this.version.toString())
+      : this.version.toString();
     let updated = false;
     for (const node of xpath.select(this.xpath, document) as Node[]) {
-      if (node.textContent !== version) {
-        node.textContent = version;
+      if (node.textContent !== newVersion) {
+        node.textContent = newVersion;
         updated = true;
       }
     }

@@ -87,6 +87,7 @@ export interface BaseStrategyOptions {
   initialVersion?: string;
   extraLabels?: string[];
   dateFormat?: string;
+  versionPattern?: string;
 }
 
 /**
@@ -118,6 +119,7 @@ export abstract class BaseStrategy implements Strategy {
   readonly extraFiles: ExtraFile[];
   readonly extraLabels: string[];
   protected dateFormat: string;
+  protected versionPattern?: string;
 
   readonly changelogNotes: ChangelogNotes;
 
@@ -155,6 +157,7 @@ export abstract class BaseStrategy implements Strategy {
     this.initialVersion = options.initialVersion;
     this.extraLabels = options.extraLabels || [];
     this.dateFormat = options.dateFormat || DEFAULT_DATE_FORMAT;
+    this.versionPattern = options.versionPattern;
   }
 
   /**
@@ -323,7 +326,7 @@ export abstract class BaseStrategy implements Strategy {
     );
     if (!bumpOnlyOptions && this.changelogEmpty(releaseNotesBody)) {
       this.logger.info(
-        `No user facing commits found since ${
+        `No user facing commits found since ${ 
           latestRelease ? latestRelease.sha : 'beginning of time'
         } - skipping`
       );
@@ -428,28 +431,44 @@ export abstract class BaseStrategy implements Strategy {
               extraFileUpdates.push({
                 path: this.addPath(path),
                 createIfMissing: false,
-                updater: new GenericJson(extraFile.jsonpath, version),
+                updater: new GenericJson(
+                  extraFile.jsonpath,
+                  version,
+                  extraFile['version-pattern'] ?? this.versionPattern
+                ),
               });
               break;
             case 'yaml':
               extraFileUpdates.push({
                 path: this.addPath(path),
                 createIfMissing: false,
-                updater: new GenericYaml(extraFile.jsonpath, version),
+                updater: new GenericYaml(
+                  extraFile.jsonpath,
+                  version,
+                  extraFile['version-pattern'] ?? this.versionPattern
+                ),
               });
               break;
             case 'toml':
               extraFileUpdates.push({
                 path: this.addPath(path),
                 createIfMissing: false,
-                updater: new GenericToml(extraFile.jsonpath, version),
+                updater: new GenericToml(
+                  extraFile.jsonpath,
+                  version,
+                  extraFile['version-pattern'] ?? this.versionPattern
+                ),
               });
               break;
             case 'xml':
               extraFileUpdates.push({
                 path: this.addPath(path),
                 createIfMissing: false,
-                updater: new GenericXml(extraFile.xpath, version),
+                updater: new GenericXml(
+                  extraFile.xpath,
+                  version,
+                  extraFile['version-pattern'] ?? this.versionPattern
+                ),
               });
               break;
             case 'pom':
@@ -461,7 +480,7 @@ export abstract class BaseStrategy implements Strategy {
               break;
             default:
               throw new Error(
-                `unsupported extraFile type: ${
+                `unsupported extraFile type: ${ 
                   (extraFile as {type: string}).type
                 }`
               );
@@ -472,7 +491,11 @@ export abstract class BaseStrategy implements Strategy {
           path: this.addPath(extraFile),
           createIfMissing: false,
           updater: new CompositeUpdater(
-            new GenericJson('$.version', version),
+            new GenericJson(
+              '$.version',
+              version,
+              this.versionPattern
+            ),
             new Generic({version, versionsMap, dateFormat: dateFormat})
           ),
         });
@@ -481,7 +504,11 @@ export abstract class BaseStrategy implements Strategy {
           path: this.addPath(extraFile),
           createIfMissing: false,
           updater: new CompositeUpdater(
-            new GenericYaml('$.version', version),
+            new GenericYaml(
+              '$.version',
+              version,
+              this.versionPattern
+            ),
             new Generic({version, versionsMap, dateFormat: dateFormat})
           ),
         });
@@ -490,7 +517,11 @@ export abstract class BaseStrategy implements Strategy {
           path: this.addPath(extraFile),
           createIfMissing: false,
           updater: new CompositeUpdater(
-            new GenericToml('$.version', version),
+            new GenericToml(
+              '$.version',
+              version,
+              this.versionPattern
+            ),
             new Generic({version, versionsMap, dateFormat: dateFormat})
           ),
         });
@@ -500,7 +531,11 @@ export abstract class BaseStrategy implements Strategy {
           createIfMissing: false,
           updater: new CompositeUpdater(
             // Updates "version" element that is a child of the root element.
-            new GenericXml('/*/version', version),
+            new GenericXml(
+              '/*/version',
+              version,
+              this.versionPattern
+            ),
             new Generic({version, versionsMap, dateFormat: dateFormat})
           ),
         });

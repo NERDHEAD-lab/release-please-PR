@@ -79,5 +79,18 @@ describe('GenericToml', () => {
       expect(newContent).not.to.eql(oldContent);
       snapshot(newContent);
     });
+    it('updates matching entry with version pattern', async () => {
+      const oldContent = readFileSync(
+        resolve(fixturesPath, './Cargo.toml'),
+        'utf8'
+      ).replace(/\r\n/g, '\n');
+      const updater = new GenericToml(
+        '$.package.version',
+        Version.parse('v2.3.4'),
+        'v${version}'
+      );
+      const newContent = updater.updateContent(oldContent);
+      snapshot(newContent);
+    });
   });
 });

@@ -32,10 +32,16 @@ const DOCUMENT_SEPARATOR = '---\n';
 export class GenericYaml implements Updater {
   readonly jsonpath: string;
   readonly version: Version;
+  readonly versionPattern?: string;
 
-  constructor(jsonpath: string, version: Version) {
+  constructor(
+    jsonpath: string,
+    version: Version,
+    versionPattern?: string
+  ) {
     this.jsonpath = jsonpath;
     this.version = version;
+    this.versionPattern = versionPattern;
   }
   /**
    * Given initial file contents, return updated contents.
@@ -66,7 +72,10 @@ export class GenericYaml implements Updater {
           }
 
           modified = true;
-          payload.parent[payload.parentProperty] = this.version.toString();
+          const newVersion = this.versionPattern
+            ? this.versionPattern.replace(/\${version}/g, this.version.toString())
+            : this.version.toString();
+          payload.parent[payload.parentProperty] = newVersion;
           return payload;
         },
       });

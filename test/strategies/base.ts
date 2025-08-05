@@ -370,6 +370,61 @@ describe('Strategy', () => {
       expect(pullRequest).to.exist;
       expect(pullRequest?.labels).to.eql(['foo', 'bar']);
     });
+    describe('version-pattern in extra-files', () => {
+      it('should apply file-specific pattern over package-level pattern', async () => {
+        const strategy = new TestStrategy({
+          targetBranch: 'main',
+          github,
+          component: 'google-cloud-automl',
+          versionPattern: 'pkg-v${version}',
+          extraFiles: [
+            {
+              type: 'json',
+              path: '3.json',
+              jsonpath: '$.foo',
+              'version-pattern': 'file-v${version}',
+            },
+          ],
+        });
+        const pullRequest = await strategy.buildReleasePullRequest(
+          buildMockConventionalCommit('fix: a bugfix'),
+          undefined
+        );
+        const updater = pullRequest!.updates[0].updater as GenericJson;
+        expect(updater.versionPattern).to.equal('file-v${version}');
+      });
+
+      it('should apply package-level pattern when file-specific is missing', async () => {
+        const strategy = new TestStrategy({
+          targetBranch: 'main',
+          github,
+          component: 'google-cloud-automl',
+          versionPattern: 'pkg-v${version}',
+          extraFiles: [{type: 'json', path: '3.json', jsonpath: '$.foo'}],
+        });
+        const pullRequest = await strategy.buildReleasePullRequest(
+          buildMockConventionalCommit('fix: a bugfix'),
+          undefined
+        );
+        const updater = pullRequest!.updates[0].updater as GenericJson;
+        expect(updater.versionPattern).to.equal('pkg-v${version}');
+      });
+
+      it('should be undefined when no pattern is provided', async () => {
+        const strategy = new TestStrategy({
+          targetBranch: 'main',
+          github,
+          component: 'google-cloud-automl',
+          extraFiles: [{type: 'json', path: '3.json', jsonpath: '$.foo'}],
+        });
+        const pullRequest = await strategy.buildReleasePullRequest(
+          buildMockConventionalCommit('fix: a bugfix'),
+          undefined
+        );
+        const updater = pullRequest!.updates[0].updater as GenericJson;
+        expect(updater.versionPattern).to.be.undefined;
+      });
+    });
   });
   describe('buildRelease', () => {
     it('builds a release tag', async () => {

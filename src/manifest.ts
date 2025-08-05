@@ -52,35 +52,41 @@ type ExtraGenericFile = {
   type: 'generic';
   path: string;
   glob?: boolean;
+  'version-pattern'?: string;
 };
 type ExtraJsonFile = {
   type: 'json';
   path: string;
   jsonpath: string;
   glob?: boolean;
+  'version-pattern'?: string;
 };
 type ExtraYamlFile = {
   type: 'yaml';
   path: string;
   jsonpath: string;
   glob?: boolean;
+  'version-pattern'?: string;
 };
 type ExtraXmlFile = {
   type: 'xml';
   path: string;
   xpath: string;
   glob?: boolean;
+  'version-pattern'?: string;
 };
 type ExtraPomFile = {
   type: 'pom';
   path: string;
   glob?: boolean;
+  'version-pattern'?: string;
 };
 type ExtraTomlFile = {
   type: 'toml';
   path: string;
   jsonpath: string;
   glob?: boolean;
+  'version-pattern'?: string;
 };
 export type ExtraFile =
   | string
@@ -139,6 +145,7 @@ export interface ReleaserConfig {
   skipSnapshot?: boolean;
   // Manifest only
   excludePaths?: string[];
+  versionPattern?: string;
 }
 
 export interface CandidateReleasePullRequest {
@@ -187,6 +194,7 @@ interface ReleaserConfigJson {
   'initial-version'?: string;
   'exclude-paths'?: string[]; // manifest-only
   'date-format'?: string;
+  'version-pattern'?: string;
 }
 
 export interface ManifestOptions {
@@ -1407,6 +1415,7 @@ function extractReleaserConfig(
     initialVersion: config['initial-version'],
     excludePaths: config['exclude-paths'],
     dateFormat: config['date-format'],
+    versionPattern: config['version-pattern'],
   };
 }
 
@@ -1767,6 +1776,7 @@ function mergeReleaserConfig(
     extraLabels: pathConfig.extraLabels ?? defaultConfig.extraLabels,
     excludePaths: pathConfig.excludePaths ?? defaultConfig.excludePaths,
     dateFormat: pathConfig.dateFormat ?? defaultConfig.dateFormat,
+    versionPattern: pathConfig.versionPattern ?? defaultConfig.versionPattern,
   };
 }
 

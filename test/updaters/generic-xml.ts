@@ -57,5 +57,18 @@ describe('GenericXml', () => {
       const newContent = updater.updateContent(oldContent);
       snapshot(newContent);
     });
+    it('updates matching entry with custom version pattern', async () => {
+      const oldContent = readFileSync(
+        resolve(fixturesPath, './Foo.csproj'),
+        'utf8'
+      ).replace(/\r\n/g, '\n');
+      const updater = new GenericXml(
+        '//Project/PropertyGroup/Version',
+          Version.parse('v2.3.4'),
+        '${version}-RELEASE'
+      );
+      const newContent = updater.updateContent(oldContent);
+      snapshot(newContent);
+    });
   });
 });

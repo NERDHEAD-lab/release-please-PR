@@ -24,10 +24,16 @@ const VERSION_REGEX =
 export class GenericJson implements Updater {
   readonly jsonpath: string;
   readonly version: Version;
+  readonly versionPattern?: string;
 
-  constructor(jsonpath: string, version: Version) {
+  constructor(
+    jsonpath: string,
+    version: Version,
+    versionPattern?: string
+  ) {
     this.jsonpath = jsonpath;
     this.version = version;
+    this.versionPattern = versionPattern;
   }
   /**
    * Given initial file contents, return updated contents.
@@ -49,9 +55,12 @@ export class GenericJson implements Updater {
           logger.warn(`No version found in ${this.jsonpath}. Skipping.`);
           return payload;
         }
+        const newVersion = this.versionPattern
+          ? this.versionPattern.replace(/\${version}/g, this.version.toString())
+          : this.version.toString();
         payload.parent[payload.parentProperty] = payload.parent[
           payload.parentProperty
-        ].replace(VERSION_REGEX, this.version.toString());
+        ].replace(VERSION_REGEX, newVersion);
         return payload;
       },
     });

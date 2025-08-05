@@ -29,10 +29,16 @@ import {logger as defaultLogger, Logger} from '../util/logger';
 export class GenericToml implements Updater {
   readonly jsonpath: string;
   readonly version: Version;
+  readonly versionPattern?: string;
 
-  constructor(jsonpath: string, version: Version) {
+  constructor(
+    jsonpath: string,
+    version: Version,
+    versionPattern?: string
+  ) {
     this.jsonpath = jsonpath;
     this.version = version;
+    this.versionPattern = versionPattern;
   }
   /**
    * Given initial file contents, return updated contents.
@@ -60,9 +66,14 @@ export class GenericToml implements Updater {
     }
 
     let processed = content;
+    const newVersion = this.versionPattern
+      ? this.versionPattern.replace(/\${version}/g, this.version.toString())
+      : this.version.toString();
     paths.forEach(path => {
-      if (path[0] === '$') path = path.slice(1);
-      processed = replaceTomlValue(processed, path, this.version.toString());
+      if (path[0] === '$') {
+        path = path.slice(1);
+      }
+      processed = replaceTomlValue(processed, path, newVersion);
     });
 
     return processed;

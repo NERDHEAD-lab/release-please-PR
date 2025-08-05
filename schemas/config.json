@@ -155,6 +155,10 @@
                   "jsonpath": {
                     "description": "The jsonpath to the version entry in the file.",
                     "type": "string"
+                  },
+                  "version-pattern": {
+                    "description": "A pattern to format the version string. Use ${version} as a placeholder.",
+                    "type": "string"
                   }
                 },
                 "required": ["type", "path", "jsonpath"]
@@ -177,6 +181,10 @@
                   },
                   "xpath": {
                     "description": "The xpath to the version entry in the file.",
+                    "type": "string"
+                  },
+                  "version-pattern": {
+                    "description": "A pattern to format the version string. Use ${version} as a placeholder.",
                     "type": "string"
                   }
                 },
@@ -249,6 +257,10 @@
         "component-no-space": {
           "description": "release-please automatically adds ` ` (space) in front of parsed ${component}. This option indicates whether that behaviour should be disabled. Defaults to `false`",
           "type": "boolean"
+        },
+        "version-pattern": {
+          "description": "A pattern to format the version string. Use ${version} as a placeholder.",
+          "type": "string"
         }
       }
     }
@@ -486,6 +498,7 @@
     "snapshot-label": true,
     "initial-version": true,
     "exclude-paths": true,
-    "component-no-space": false
+    "component-no-space": false,
+    "version-pattern": true
   }
 }

@@ -84,5 +84,18 @@ describe('GenericYaml', () => {
       const newContent = updater.updateContent(oldContent);
       snapshot(newContent);
     });
+    it('updates matching entry with custom version pattern', async () => {
+      const oldContent = readFileSync(
+        resolve(fixturesPath, './helm/Chart.yaml'),
+        'utf8'
+      ).replace(/\r\n/g, '\n');
+      const updater = new GenericYaml(
+        '$.version',
+        Version.parse('v2.3.4'),
+        '${version}-RELEASE'
+      );
+      const newContent = updater.updateContent(oldContent);
+      snapshot(newContent);
+    });
   });
 });
