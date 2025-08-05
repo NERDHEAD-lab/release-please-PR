@@ -38,6 +38,20 @@ maintainers:
 
 `
 
+exports['GenericYaml updateContent updates matching entry with custom version pattern 1'] = `
+name: helm-test-repo
+version: 2.3.4-RELEASE
+apiVersion: v2
+appVersion: 2.0.0
+dependencies:
+  - name: another-repo
+    version: 0.15.3
+    repository: linkToHelmChartRepo
+maintainers:
+  - Abhinav Khanna
+
+`
+
 exports['GenericYaml updateContent updates multi-document yaml 1'] = `
 ---
 name: first
