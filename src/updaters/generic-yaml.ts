@@ -68,13 +68,9 @@ export class GenericYaml implements Updater {
           }
 
           modified = true;
-          const newVersion = this.versionPattern
-            ? this.versionPattern.replace(
-                /\${version}/g,
-                this.version.toString()
-              )
-            : this.version.toString();
-          payload.parent[payload.parentProperty] = newVersion;
+          payload.parent[payload.parentProperty] = this.versionPattern
+              ? this.versionPattern.replace(/\${version}/g, this.version.toString())
+              : this.version.toString();
           return payload;
         },
       });

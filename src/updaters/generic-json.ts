@@ -51,12 +51,14 @@ export class GenericJson implements Updater {
           logger.warn(`No version found in ${this.jsonpath}. Skipping.`);
           return payload;
         }
-        const newVersion = this.versionPattern
-          ? this.versionPattern.replace(/\${version}/g, this.version.toString())
-          : this.version.toString();
-        payload.parent[payload.parentProperty] = payload.parent[
-          payload.parentProperty
-        ].replace(VERSION_REGEX, newVersion);
+        if (this.versionPattern) {
+          payload.parent[payload.parentProperty] = this.versionPattern.replace(/\${version}/g, this.version.toString());
+        } else {
+          payload.parent[payload.parentProperty] = payload.parent[
+            payload.parentProperty
+          ].replace(VERSION_REGEX, this.version.toString());
+        }
+
         return payload;
       },
     });

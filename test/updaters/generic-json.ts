@@ -92,6 +92,24 @@ describe('GenericJson', () => {
         '${version}-RELEASE'
       );
       const newContent = updater.updateContent(oldContent);
+      expect(JSON.parse(newContent)['version']).to.equal('2.3.4-RELEASE');
+      snapshot(newContent);
+    });
+    it('updates matching entry with custom version pattern with jsonPath', async () => {
+      const oldContent = readFileSync(
+          resolve(fixturesPath, './esy.json'),
+          'utf8'
+      ).replace(/\r\n/g, '\n');
+      const updater = new GenericJson(
+          '$[$schema]',
+          Version.parse('v2.3.4'),
+          'https://example.com/schemas/eay/${version}/config.json'
+      );
+      const newContent = updater.updateContent(oldContent);
+      //toJson
+      expect(JSON.parse(newContent)['$version']).to.equal(
+            'https://example.com/schemas/eay/2.3.4/config.json'
+      );
       snapshot(newContent);
     });
   });
